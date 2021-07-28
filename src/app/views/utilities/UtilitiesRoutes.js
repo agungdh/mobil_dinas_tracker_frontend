@@ -1,9 +1,11 @@
 import React from 'react'
+import { authRoles } from '../../auth/authRoles'
 
 const utilitiesRoutes = [
     {
         path: '/utilities/color',
         component: React.lazy(() => import('./Color')),
+        auth: authRoles.admin
     },
     {
         path: '/utilities/spacing',

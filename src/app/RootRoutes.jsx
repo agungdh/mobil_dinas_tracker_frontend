@@ -28,12 +28,12 @@ const errorRoute = [
 
 const routes = [
     ...dashboardRoutes,
-    ...materialRoutes,
-    ...utilitiesRoutes,
-    ...chartsRoute,
-    ...dragAndDropRoute,
-    ...formsRoutes,
-    ...mapRoutes,
+    // ...materialRoutes,
+    // ...utilitiesRoutes,
+    // ...chartsRoute,
+    // ...dragAndDropRoute,
+    // ...formsRoutes,
+    // ...mapRoutes,
     ...redirectRoute,
     ...errorRoute,
 ]

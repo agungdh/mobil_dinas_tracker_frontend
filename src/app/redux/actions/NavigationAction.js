@@ -21,7 +21,7 @@ const getfilteredNavigations = (navList = [], role) => {
 export function getNavigationByUser() {
     return (dispatch, getState) => {
         let { user, navigations = [] } = getState()
-
+        console.log({path: '/app/matx-react-master/src/app/redux/actions/NavigationAction.js', method: 'getNavigationByUser', user});
         let filteredNavigations = getfilteredNavigations(navigations, user.role)
 
         dispatch({

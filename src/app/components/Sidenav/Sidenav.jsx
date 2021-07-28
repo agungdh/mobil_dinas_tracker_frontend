@@ -5,6 +5,8 @@ import { MatxVerticalNav } from 'app/components'
 import { makeStyles } from '@material-ui/core/styles'
 import clsx from 'clsx'
 import useSettings from 'app/hooks/useSettings'
+import { authRoles } from '../../auth/authRoles'
+import useAuth from 'app/hooks/useAuth'
 
 const useStyles = makeStyles(({ palette, ...theme }) => ({
     scrollable: {
@@ -29,6 +31,7 @@ const useStyles = makeStyles(({ palette, ...theme }) => ({
 const Sidenav = ({ children }) => {
     const classes = useStyles()
     const { settings, updateSettings } = useSettings()
+    const { logout, user } = useAuth()
 
     const updateSidebarMode = (sidebarSettings) => {
         let activeLayoutSettingsName = settings.activeLayout + 'Settings'
@@ -46,6 +49,25 @@ const Sidenav = ({ children }) => {
         })
     }
 
+    const getfilteredNavigations = (navList = [], role) => {
+        return navList.reduce((array, nav) => {
+            if (nav.auth) {
+                if (nav.auth.includes(role)) {
+                    array.push(nav)
+                }
+            } else {
+                if (nav.children) {
+                    nav.children = getfilteredNavigations(nav.children, role)
+                    array.push(nav)
+                } else {
+                    array.push(nav)
+                }
+            }
+            return array
+        }, [])
+    }
+    let filteredNavigations = getfilteredNavigations(navigations, user.role);
+
     return (
         <Fragment>
             <Scrollbar
@@ -53,7 +75,7 @@ const Sidenav = ({ children }) => {
                 className={clsx('relative px-4', classes.scrollable)}
             >
                 {children}
-                <MatxVerticalNav items={navigations} />
+                <MatxVerticalNav items={filteredNavigations} />
             </Scrollbar>
 
             <div

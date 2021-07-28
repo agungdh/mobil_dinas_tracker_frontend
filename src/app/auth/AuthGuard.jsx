@@ -1,52 +1,73 @@
 import React, {
-    // useContext,
+    useContext,
     useEffect,
     useState,
 } from 'react'
 import { Redirect, useLocation } from 'react-router-dom'
-// import AppContext from "app/appContext";
+import AppContext from "app/contexts/AppContext";
 import useAuth from 'app/hooks/useAuth'
 
-// const getUserRoleAuthStatus = (pathname, user, routes) => {
-//   const matched = routes.find((r) => r.path === pathname);
+const getUserRoleAuthStatus = (pathname, user, routes) => {
+  const matched = routes.find((r) => r.path === pathname);
 
-//   const authenticated =
-//     matched && matched.auth && matched.auth.length
-//       ? matched.auth.includes(user.role)
-//       : true;
-//   console.log(matched, user);
-//   return authenticated;
-// };
+  const authenticated =
+    matched && matched.auth && matched.auth.length
+      ? matched.auth.includes(user.role)
+      : true;
+  console.log(matched, user);
+  return authenticated;
+};
 
 const AuthGuard = ({ children }) => {
     const {
         isAuthenticated,
-        // user
+        user
     } = useAuth()
 
     const [previouseRoute, setPreviousRoute] = useState(null)
     const { pathname } = useLocation()
 
-    // const { routes } = useContext(AppContext);
-    // const isUserRoleAuthenticated = getUserRoleAuthStatus(pathname, user, routes);
-    // let authenticated = isAuthenticated && isUserRoleAuthenticated;
+    const { routes } = useContext(AppContext);
+    if (!isAuthenticated) {
+        return (
+            <Redirect
+                to={{
+                    pathname: '/session/signin',
+                    // state: { redirectUrl: previouseRoute },
+                }}
+            />
+        )
+    }
+    const isUserRoleAuthenticated =  getUserRoleAuthStatus(pathname, user, routes);
+    let authenticated = isAuthenticated;
 
     // IF YOU NEED ROLE BASED AUTHENTICATION,
     // UNCOMMENT ABOVE TWO LINES, getUserRoleAuthStatus METHOD AND user VARIABLE
     // AND COMMENT OUT BELOW LINE
-    let authenticated = isAuthenticated
+    // let authenticated = isAuthenticated
 
-    useEffect(() => {
-        if (previouseRoute !== null) setPreviousRoute(pathname)
-    }, [pathname, previouseRoute])
+    // useEffect(() => {
+    //     if (previouseRoute !== null) setPreviousRoute(pathname)
+    // }, [pathname, previouseRoute])
 
-    if (authenticated) return <>{children}</>
+    if (authenticated) {
+        if (isUserRoleAuthenticated) {
+            return <>{children}</>
+        } else {
+            return (<Redirect
+                to={{
+                    pathname: '/',
+                    // state: { redirectUrl: previouseRoute },
+                }}
+            />)
+        }
+    }
     else {
         return (
             <Redirect
                 to={{
                     pathname: '/session/signin',
-                    state: { redirectUrl: previouseRoute },
+                    // state: { redirectUrl: previouseRoute },
                 }}
             />
         )
